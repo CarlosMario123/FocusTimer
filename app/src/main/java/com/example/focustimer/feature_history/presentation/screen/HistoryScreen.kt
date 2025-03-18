@@ -27,6 +27,9 @@ import com.example.focustimer.feature_history.presentation.viewmodel.HistoryView
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import com.airbnb.lottie.compose.*
+import com.example.focustimer.R
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -158,16 +161,30 @@ fun HistoryScreen(
                 }
             } else if (sessions.isEmpty()) {
                 item {
-                    Box(
+                    Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(200.dp),
-                        contentAlignment = Alignment.Center
+                            .height(300.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
                     ) {
+                        val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.empty_state))
+                        val progress by animateLottieCompositionAsState(
+                            composition = composition,
+                            iterations = LottieConstants.IterateForever
+                        )
+
+                        LottieAnimation(
+                            composition = composition,
+                            progress = { progress },
+                            modifier = Modifier.size(200.dp)
+                        )
                         Text(
                             text = "No hay sesiones para esta fecha",
-                            color = Color.White.copy(alpha = 0.6f)
+                            color = Color.White.copy(alpha = 0.6f),
+                            modifier = Modifier.padding(top = 8.dp)
                         )
+
                     }
                 }
             } else {

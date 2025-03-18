@@ -66,6 +66,9 @@ dependencies {
     // Material Icons Extended
     implementation("androidx.compose.material:material-icons-extended:1.6.2")
 
+    implementation ("com.airbnb.android:lottie-compose:6.3.0")
+    implementation ("com.google.accompanist:accompanist-pager:0.31.2-alpha")
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)

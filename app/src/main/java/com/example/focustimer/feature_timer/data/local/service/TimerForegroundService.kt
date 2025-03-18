@@ -154,6 +154,8 @@ class TimerForegroundService : Service() {
 
         when(action) {
             ACTION_START_TIMER -> {
+                // Aquí intent no puede ser nulo porque ya verificamos que action == ACTION_START_TIMER
+                // Pero aún así, hacemos manejo seguro de nulos
                 val mode = intent?.getSerializableExtra(EXTRA_TIMER_MODE) as? TimerMode ?: TimerMode.FOCUS
                 val durationMinutes = intent?.getIntExtra(EXTRA_DURATION_MINUTES, 0) ?: 0
 
@@ -256,10 +258,18 @@ class TimerForegroundService : Service() {
                 updateNotification()
                 notifyStateChange()
 
+
+                if (timerState.currentMode == TimerMode.FOCUS) {
+
+                    if (elapsedSeconds > 0 && elapsedSeconds % 60 == 0) {
+                        Log.d(
+                            TAG,
+                            "🕒 Momento para notificación motivacional periódica: $elapsedSeconds segundos transcurridos"
+                        )
                         sendTimerNotification("MOTIVATION")
                     }
                 }
-
+            }
             override fun onFinish() {
                 timerState = timerState.copy(
                     isRunning = false,
@@ -304,7 +314,7 @@ class TimerForegroundService : Service() {
     fun resumeTimer() {
         Log.d(TAG, "▶️ Reanudando temporizador")
         val remainingMillis = timerState.remainingTimeInSeconds * 1000L
-
+        val totalTimeInSeconds = timerState.totalTimeInSeconds
         countDownTimer?.cancel()
 
         timerState = timerState.copy(
@@ -318,17 +328,27 @@ class TimerForegroundService : Service() {
         countDownTimer = object : CountDownTimer(remainingMillis, UPDATE_INTERVAL) {
             override fun onTick(millisUntilFinished: Long) {
                 val secondsRemaining = (millisUntilFinished / 1000).toInt()
-                val totalSeconds = timerState.totalTimeInSeconds
-                val progress = 1f - (secondsRemaining.toFloat() / totalSeconds.toFloat())
+                // Calcular progreso basado en el tiempo total y el tiempo restante
+                val progress = 1f - (secondsRemaining.toFloat() / totalTimeInSeconds.toFloat())
+                val elapsedSeconds = totalTimeInSeconds - secondsRemaining
 
                 timerState = timerState.copy(
                     remainingTimeInSeconds = secondsRemaining,
                     progress = progress,
-                    elapsedTimeInSeconds = totalSeconds - secondsRemaining
+                    elapsedTimeInSeconds = elapsedSeconds
                 )
 
                 updateNotification()
                 notifyStateChange()
+
+                // CORRECCIÓN: Enviar notificación motivacional periódica
+                if (timerState.currentMode == TimerMode.FOCUS) {
+                    // Para pruebas: cambiar a % 60 para que envíe cada 1 minuto en lugar de cada 5
+                    if (elapsedSeconds > 0 && elapsedSeconds % 60 == 0) {
+                        Log.d(TAG, "🕒 Momento para notificación motivacional periódica: $elapsedSeconds segundos transcurridos")
+                        sendTimerNotification("MOTIVATION")
+                    }
+                }
             }
 
             override fun onFinish() {
