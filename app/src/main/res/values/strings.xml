@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">FocusTimer</string>
+
+    <!-- Notification Strings -->
+    <string name="timer_notification_channel_name">Timer Notifications</string>
+    <string name="timer_notification_channel_description">Notifications for the active timer</string>
+    <string name="motivation_notification_channel_name">Motivational Messages</string>
+    <string name="motivation_notification_channel_description">Motivational messages to keep you focused</string>
+</resources>
