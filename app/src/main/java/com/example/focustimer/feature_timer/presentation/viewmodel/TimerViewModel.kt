@@ -401,7 +401,7 @@ class TimerViewModel(
         val progress: Float = 0f,
         val currentSession: Int = 0,
         val totalSessions: Int = 4,
-        val modeName: String = "Enfoque",  
+        val modeName: String = "Enfoque",
         val elapsedTimeInSeconds: Int = 0,
         val totalTimeInSeconds: Int = 25 * 60
     )

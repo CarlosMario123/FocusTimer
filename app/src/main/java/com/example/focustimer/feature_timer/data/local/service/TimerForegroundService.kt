@@ -154,8 +154,6 @@ class TimerForegroundService : Service() {
 
         when(action) {
             ACTION_START_TIMER -> {
-                // Aquí intent no puede ser nulo porque ya verificamos que action == ACTION_START_TIMER
-                // Pero aún así, hacemos manejo seguro de nulos
                 val mode = intent?.getSerializableExtra(EXTRA_TIMER_MODE) as? TimerMode ?: TimerMode.FOCUS
                 val durationMinutes = intent?.getIntExtra(EXTRA_DURATION_MINUTES, 0) ?: 0
 
@@ -258,13 +256,9 @@ class TimerForegroundService : Service() {
                 updateNotification()
                 notifyStateChange()
 
-                // Enviar notificación motivacional periódica (cada 5 minutos si está en modo FOCUS)
-                if (timerState.currentMode == TimerMode.FOCUS &&
-                    elapsedSeconds > 0 &&
-                    elapsedSeconds % 300 == 0) { // 300 segundos = 5 minutos
-                    sendTimerNotification("MOTIVATION")
+                        sendTimerNotification("MOTIVATION")
+                    }
                 }
-            }
 
             override fun onFinish() {
                 timerState = timerState.copy(
